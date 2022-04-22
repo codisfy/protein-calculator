@@ -1,104 +1,21 @@
-import { AppProps } from "next/app"
-import { PropsWithChildren, useState } from "react"
-import { Button, Form, Table } from "react-bootstrap"
+import { Alert, Button, Form, Table } from "react-bootstrap"
+import { RowStructure } from "../helpers/stats-calculator"
 import WeightField from "./WeightField"
-
-export interface RowStructure {
-  brand: string
-  containerWeight: number
-  containerUnit: string
-  scoopWeight: number
-  scoopUnit: string
-  proteinWeight: number
-  proteinUnit: string
-  price: number
-  currency: string,
-  id: string,
-}
 
 interface RowComponent extends RowStructure {
   onDelete: Function
   onChange: Function
   allowDelete: boolean
+  bestValue: boolean
 }
 
 function InputContainer(props: any) {
   return <div className="col-6 col-md mb-3 mb-sm-0">{props.children}</div>
 }
 
-const units = [
-  {
-    name: "kg",
-    conversion: 1000,
-  },
-  {
-    name: "g",
-    conversion: 1,
-  },
-  {
-    name: "lb",
-    conversion: 453.592,
-  },
-]
-
-function convertToGrams(value: number, unit: string) {
-  let unitData = units.find((unitItem: any) => unitItem.name == unit)
-  if (!unitData) {
-    throw "Invalid unit!"
-  }
-  return value * unitData.conversion
-}
-
 const ProteinCalculator = (props: RowComponent) => {
   // TODO: Add animations when showing stats
   // TODO: Add proper statis types
-
-  let proteinInfo = {
-    perUnitValue: "0",
-  }
-
-  let stats = false
-
-  /**
-   * Check and see if all the required data is present for the calculation to start
-   */
-  const areStatsValid = (items: any) => {
-    for (let value of Object.values(items)) {
-      if (!value || !Number.isFinite(value)) {
-        return false
-      }
-    }
-    return true
-  }
-
-  // each item is suffixed with weight and unit looping over to fetch values
-  const calculateStats = () => {
-    let items: any = {}
-    type Stat = "container" | "price" | "scoop" | "protein"
-    let stat: Stat
-    let weightProperties: Array<Stat> = ["container", "scoop", "protein"]
-    let priceProperties: Array<Stat> = ["price"]
-    let allProperties: Array<Stat> = [...weightProperties, ...priceProperties]
-    for (stat of allProperties) {
-      if (weightProperties.includes(stat)) {
-        let value = parseFloat("" + (props as any)[stat + "Weight"])
-        items[stat] = convertToGrams(value, "" + (props as any)[stat + "Unit"])
-      } else {
-        items[stat] = parseFloat((props as any)[stat])
-      }
-    }
-    let areValid = areStatsValid(items)
-    if (areValid) {
-      let perUnitValue = (
-        ((items.protein / items.scoop) * items.container) /
-        items.price
-      ).toFixed(2)
-      proteinInfo = { perUnitValue }
-      stats = true
-    } else {
-      stats = false
-    }
-  }
 
   const handleInputChange = (e: { target: { name: any; value: any } }) => {
     //const name = e.target.name
@@ -119,8 +36,6 @@ const ProteinCalculator = (props: RowComponent) => {
     }
     props.onChange(props.id, newValues)
   }
-
-  calculateStats()
 
   return (
     <div>
@@ -187,20 +102,41 @@ const ProteinCalculator = (props: RowComponent) => {
           </Button>
         </InputContainer>
       </div>
-      {stats && (
+      {props.statsValid && (
         <div>
-          <Table size="sm" className="table-success">
+          <Table
+            size="sm"
+            className={props.bestValue ? "table-success" : "table-light"}
+          >
             <tbody>
               <tr>
                 <th>Per Price Unit Value</th>
                 <td>
-                  You are getting {proteinInfo.perUnitValue} grams of protein
-                  per {props.currency}
+                  <>
+                    {props.proteinStats?.perUnitValue} grams of protein/
+                    {props.currency}
+                  </>
                 </td>
+              </tr>
+              <tr>
+                <th>Servings per container</th>
+                <td>
+                  <>{props.proteinStats?.servingsPerContainer || ""}</>
+                </td>
+              </tr>
+              <tr>
+                <th>Raw Protein Percent</th>
+                <td><>{props.proteinStats?.proteinPercentage}%</></td>
               </tr>
             </tbody>
           </Table>
         </div>
+      )}
+      {!props.statsValid && (
+        <Alert variant="danger">
+          <Alert.Heading>Oh snap! You got an error!</Alert.Heading>
+          <p>Invalid values provided. Please update your input</p>
+        </Alert>
       )}
     </div>
   )

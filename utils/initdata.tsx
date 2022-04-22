@@ -1,4 +1,4 @@
-import { RowStructure } from "../components/ProteinCalculator"
+import { RowStructure } from "../helpers/stats-calculator"
 
 const data:Array<RowStructure> = [
   {
@@ -11,7 +11,9 @@ const data:Array<RowStructure> = [
       "proteinUnit": "g",
       "price": 100,
       "currency": "$",
-      "id": "3l8hOzM3rRYMuWDwr2YU3"
+      "id": "3l8hOzM3rRYMuWDwr2YU3",
+      "proteinStats": null,
+      "statsValid": false
   },
   {
       "brand": "Canadian Protein",
@@ -23,7 +25,9 @@ const data:Array<RowStructure> = [
       "proteinUnit": "g",
       "price": 154,
       "currency": "$",
-      "id": "FJfeu7mzDvFSZDPMrNTnl"
+      "id": "FJfeu7mzDvFSZDPMrNTnl",
+      "proteinStats": null,
+      "statsValid": false
   },
   {
       "brand": "MyProtein",
@@ -35,7 +39,9 @@ const data:Array<RowStructure> = [
       "proteinUnit": "g",
       "price": 175,
       "currency": "$",
-      "id": "ppeKuRG2Y6bXzzueRzSCM"
+      "id": "ppeKuRG2Y6bXzzueRzSCM",
+      "proteinStats": null,
+      "statsValid": false
   }
 ]
 
