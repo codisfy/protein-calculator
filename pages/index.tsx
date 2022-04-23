@@ -80,7 +80,7 @@ const Home: NextPage = () => {
       </Head>
 
       <header className="pb-3 m-4 border-bottom d-flex justify-content-between align-items-center">
-        <span className="fs-4">Protein Value Calculator</span>
+        <h4>Protein Value Calculator</h4>
         <div>
           <CurrencyDropdown
             currencies={["$", "₹", "£"]}
