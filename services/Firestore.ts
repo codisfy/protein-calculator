@@ -1,6 +1,7 @@
+import { signInAnonymously } from "@firebase/auth"
 import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore"
 import { RowStructure } from "../helpers/stats-calculator"
-import { db } from "../utils/firebase"
+import { db, auth } from "../utils/firebase"
 
 const collectionName = "sessions"
 
@@ -21,3 +22,7 @@ export const getSession = async (sessionId: string) => {
     return [];
   }
 }
+
+export const anonymousLogin = () => {
+  return signInAnonymously(auth);
+};
